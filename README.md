@@ -106,22 +106,14 @@ Telegram User -> Handler → Database
 
 
 ## Развертывание
-### Прокси
-Прокси которые используются в главе [Настройка в ProxMox](#настройка-в-proxmox)
-
-По умолчанию без пароля, доступ к ним по Ip.
-
-Доступы сконфигурированные у 2 машин: 138.145 и 138.251 
-
-Для получения доступа нужно обращаться к DevOps
 
 ### Нативно
 
 Проверялось в нативной Ubuntu 22.04
 
 ```bash
-git clone git@gitlab.dmz:neuron/neuron/neuron_tg_bot.git
-cd neuron_tg_bot
+git clone /.../
+cd domestro_tg_bot
 # запустите в докере окружение для программы
 docker-compose up mongodb -d
 ```
@@ -142,8 +134,8 @@ python src/main.py
 Проверялось в нативной Win10, Ubuntu 22.04
 
 ```bash
-git clone git@gitlab.dmz:neuron/neuron/neuron_tg_bot.git
-cd neuron_tg_bot
+git clone /,,,/
+cd domestro_tg_bot
 # при необходимости обновите настройки в файле [exemple.env](/.env)
 .env определяет окружение настройки [exemple.env](/.env)
 # запуск приложения и окружения в текущем терминале
@@ -155,7 +147,7 @@ docker compose --env-file your_file.env up --build  -d
 Бот запустился, можно идти в ТГ
 ```
 INFO:aiogram.dispatcher:Start polling
-INFO:aiogram.dispatcher:Run polling for bot @neuron_test_bot id=8098108582 - 'Neuron'
+INFO:aiogram.dispatcher:Run polling for bot @domestro_test_bot id=8098108582 - 'Neuron'
 ```
 
 ### Настройка в PROXMOX
@@ -170,80 +162,6 @@ export https_proxy=http://172.16.254.1:3128
 export HTTP_PROXY=http://172.16.254.1:3128
 export HTTPS_PROXY=http://172.16.254.1:3128
 ```
-
-#### Установка docker и docker-compose
-
-```bash
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/docker-ce_28.0.0-1~debian.11~bullseye_amd64.deb
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/docker-ce-cli_28.0.0-1~debian.11~bullseye_amd64.deb
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/containerd.io_1.7.25-1_amd64.deb
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/docker-compose-plugin_2.33.0-1~debian.11~bullseye_amd64.deb
-
-dpkg -i  docker-ce_28.0.0-1~debian.11~bullseye_amd64.deb docker-ce-cli_28.0.0-1~debian.11~bullseye_amd64.deb containerd.io_1.7.25-1_amd64.deb docker-compose-plugin_2.33.0-1~debian.11~bullseye_amd64.deb
-
-# При обработке следующих пакетов произошли ошибки:
-#  containerd.io
-#  docker-ce
-# это ок
-
-
-# убедитесь, что память есть
-df -h
-
-Файловая система Размер Использовано  Дост Использовано% Cмонтировано в
-udev               2,0G            0  2,0G            0% /dev
-tmpfs              395M          47M  349M           12% /run
-/dev/sda1           28G          26G  935M           97% /
-tmpfs              2,0G            0  2,0G            0% /dev/shm
-tmpfs              5,0M            0  5,0M            0% /run/lock
-tmpfs              2,0G            0  2,0G            0% /sys/fs/cgroup
-tmpfs              395M            0  395M            0% /run/user/999
-tmpfs              395M            0  395M            0% /run/user/1000
-
-# настраиваем прокси для докера 
-mkdir -p /etc/systemd/system/docker.service.d
-nano /etc/systemd/system/docker.service.d/http-proxy.conf
-
-[Service]
-Environment="HTTP_PROXY=http://172.16.254.1:3128"
-Environment="HTTPS_PROXY=http://172.16.254.1:3128"
-Environment="NO_PROXY="
-
-# Пробуем запустить 
-sudo groupadd docker
-sudo usermod -aG docker $USER
-sudo systemctl enable docker.service
-sudo systemctl enable containerd.service
-
-# Если выдает ошибку 
-# Седелайте systemctl unmask
-
-# В случае, когда runc устарел 
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/libseccomp2_2.5.5-2_amd64.deb
-dpkg -i libseccomp2_2.5.5-2_amd64.deb
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/docker/runc_1.1.15+ds1-2_amd64.deb
-dpkg -i runc_1.1.15+ds1-2_amd64.deb
-```
-
-Еще один варианты настройки проски для docker
-~/.docker/config.json
-```
-  {
-    "proxies": {
-      "default": {
-        "httpProxy": "http://172.16.254.1:3128",
-        "httpsProxy": "http://172.16.254.1:3128",
-        "noProxy": "registry-1.docker.com,*.docker.com,repos2.dmz:8082"
-    }
-  }
-}
-```
-> Источники
->
-> astra 1.7/6 https://micronode.ru/domestic/astra_linux/1.7/docker
->
-> proxy for docker - https://docs.docker.com/engine/daemon/proxy/  https://docs.docker.com/engine/cli/proxy/
-
 
 #### Запуск PROXMOX 
 
@@ -263,7 +181,7 @@ docker compose -f docker-compose.proxmox.yml  up --build -d
 ### Запуск на машине
 ```bash
 # При первой установке
-wget ftp://172.16.254.9/jenkins/NEURON/repo-4/tg_bot/mongo_lasted_24_02_2025.tar
+
 docker load -i mongo_lasted_24_02_2025.tar
 docker tag 6551ff2e441b mongo:latest-24-02-2025
 
@@ -362,7 +280,7 @@ docker inspect <container_id>
 $ docker exec -it mongodb /bin/bash
 docker:/mongosh
 test>show dbs 
-test>use neurone_tg_bot
+test>use domestro_tg_bot
 db>show collections
 ```
 
