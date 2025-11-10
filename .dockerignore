@@ -1,0 +1,13 @@
+data/
+.vscode/
+tg/
+.idea/
+docker-compose.prod.yml
+docker-compose.proxmox.yml
+docker-compose.yml
+Dockerfile
+.gitlab
+.gitignore
+.git/
+.gitlab-ci.yml
+*.tar

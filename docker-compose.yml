@@ -1,0 +1,24 @@
+services:
+  tg_bot:
+    restart: always
+    container_name: tg_bot
+    build: 
+      context: .
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+    volumes:
+      - .:/app/
+
+  mongodb:
+    restart: always
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+
+networks:
+  default:
+    name: network
